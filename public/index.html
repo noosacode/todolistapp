@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Things to do</title>
+    <title>Brisbane Gardens & Landscapes</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
 
-    <h1>Things to do</h1>
+    <h1>Jobs</h1>
 
     <!-- Login -->
     <div id="login-box">
@@ -29,10 +29,12 @@
 
     <hr>
 
-    <!-- CRUD area -->
-    <div id="crud-area" style="display: none;">
+    <!-- Jobs area -->
+    <div id="jobs-area" style="display: none;">
 
-        <h2>Create Document</h2>
+        <p><a href="view-jobs.html">View other users' jobs</a></p>
+
+        <h2>Add a Job</h2>
 
         <input type="text" id="title" placeholder="Title">
 
@@ -43,18 +45,18 @@
         <br><br>
 
         <button id="create-btn">
-            Create Document
+            Add Job
         </button>
 
-        <h2>Documents</h2>
+        <h2>My Jobs</h2>
 
-        <div id="documents"></div>
+        <div id="jobs"></div>
 
     </div>
 
     <script src="js/login.js"></script>
     <script src="js/logout.js"></script>
-    <script src="js/crud.js"></script>
+    <script src="js/jobs.js"></script>
 
 </body>
 

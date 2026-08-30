@@ -6,7 +6,6 @@ loginBtn.addEventListener("click", async () => {
 
   try {
     const response = await fetch("/login", {
-      //    const response = await fetch(LOGIN_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -15,12 +14,11 @@ loginBtn.addEventListener("click", async () => {
     const data = await response.json();
 
     if (response.ok) {
-  localStorage.setItem("token", data.token);
-  document.getElementById("logout-btn").style.display = "block";
-  document.getElementById("crud-area").style.display = "block";
-  loadDocuments();
-  alert("Login successful!");
-
+      localStorage.setItem("token", data.token);
+      document.getElementById("logout-btn").style.display = "inline-block";
+      document.getElementById("jobs-area").style.display = "block";
+      loadJobs();
+      alert("Login successful!");
     } else {
       alert(data.message || "Login failed");
     }

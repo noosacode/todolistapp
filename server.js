@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const User = require("./backend/models/User");
-const CrudDocument = require("./backend/models/CrudDocument");
+const Job = require("./backend/models/Job");
 const auth = require("./backend/middleware/auth");
 
 const app = express();
@@ -80,87 +80,135 @@ app.get("/", function (req, res) {
 });
 
 // -------------------------
-// CRUD DOCUMENT ROUTES
+// USER LIST (for view-jobs dropdown)
 // -------------------------
 
-// Get all documents
-app.get("/api/documents", auth, async (req, res) => {
+app.get("/api/users", auth, async (req, res) => {
   try {
-    const documents = await CrudDocument.find().sort({ createdAt: -1 });
+    const users = await User.find()
+      .select("username -_id")
+      .sort({ username: 1 });
 
-    res.json(documents);
+    res.json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Get one document
-app.get("/api/documents/:id", auth, async (req, res) => {
-  try {
-    const document = await CrudDocument.findById(req.params.id);
+// -------------------------
+// JOB ROUTES
+// -------------------------
 
-    if (!document) {
+// Get logged-in user's own jobs (for index.html)
+app.get("/api/jobs", auth, async (req, res) => {
+  try {
+    const jobs = await Job.find({ username: req.user.username }).sort({
+      createdAt: -1,
+    });
+
+    res.json(jobs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get jobs for a specific user (for view-jobs.html dropdown)
+app.get("/api/jobs/user/:username", auth, async (req, res) => {
+  try {
+    const jobs = await Job.find({ username: req.params.username }).sort({
+      createdAt: -1,
+    });
+
+    res.json(jobs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get one job
+app.get("/api/jobs/:id", auth, async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+
+    if (!job) {
       return res.status(404).json({
-        message: "Document not found.",
+        message: "Job not found.",
       });
     }
 
-    res.json(document);
+    res.json(job);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Create document
-app.post("/api/documents", auth, async (req, res) => {
+// Create job
+app.post("/api/jobs", auth, async (req, res) => {
   try {
-    const document = new CrudDocument(req.body);
+    const job = new Job({
+      title: req.body.title,
+      description: req.body.description,
+      username: req.user.username,
+      dateAdded: Date.now(),
+    });
 
-    await document.save();
+    await job.save();
 
-    res.status(201).json(document);
+    res.status(201).json(job);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Update document
-app.put("/api/documents/:id", auth, async (req, res) => {
+// Update job (only the owner can update)
+app.put("/api/jobs/:id", auth, async (req, res) => {
   try {
-    const document = await CrudDocument.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        returnDocument: "after",
-        runValidators: true,
-      },
-    );
+    const job = await Job.findById(req.params.id);
 
-    if (!document) {
+    if (!job) {
       return res.status(404).json({
-        message: "Document not found.",
+        message: "Job not found.",
       });
     }
 
-    res.json(document);
+    if (job.username !== req.user.username) {
+      return res.status(403).json({
+        message: "You are not allowed to edit this job.",
+      });
+    }
+
+    job.title = req.body.title;
+    job.description = req.body.description;
+
+    await job.save();
+
+    res.json(job);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Delete document
-app.delete("/api/documents/:id", auth, async (req, res) => {
+// Delete job (only the owner can delete)
+app.delete("/api/jobs/:id", auth, async (req, res) => {
   try {
-    const document = await CrudDocument.findByIdAndDelete(req.params.id);
+    const job = await Job.findById(req.params.id);
 
-    if (!document) {
+    if (!job) {
       return res.status(404).json({
-        message: "Document not found.",
+        message: "Job not found.",
       });
     }
+
+    if (job.username !== req.user.username) {
+      return res.status(403).json({
+        message: "You are not allowed to delete this job.",
+      });
+    }
+
+    await job.deleteOne();
 
     res.json({
-      message: "Document deleted.",
+      message: "Job deleted.",
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
