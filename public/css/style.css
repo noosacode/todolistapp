@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background: #978fefef;
+    background: #e8f3e8;
     margin: 0;
     padding: 40px;
 }
@@ -8,40 +8,23 @@ body {
 .container {
     max-width: 600px;
     margin: auto;
-    background: #978fefef;
+    background: #f8fdf8;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.title {
-    margin-top: 0;
-}
-
-.input-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-#todoInput {
-    flex: 1;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
 #addButton {
     padding: 10px 20px;
     border: none;
-    background: #ff2bd1;
+    background: #7fb77e;
     color: white;
     border-radius: 6px;
     cursor: pointer;
 }
 
 .list li {
-    background: #00d4ff;
+    background: #d7ead7;
     padding: 10px;
     margin-bottom: 8px;
     border-radius: 6px;
